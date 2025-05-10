@@ -32,8 +32,21 @@ def srf(m: int) -> float:
         return 1.0
     return (1 / (m + 0.1 * (m - 1) / 4)) * (1 - (0.1 * m - 1))
 
+def rational(m, a0, a1, a2, b1):
+    return (a0 + a1 * m + a2 * m**2) / (1 + b1 * m)
+
+RATIONAL_PARAMS = (392.124, -13.3311, -1.2629, -0.0439)
+
+
+
 def final_throughput(x1, y1, x2, y2, wall_counts: dict, m: int, band: str) -> float:
     d = euclidean_distance(x1, y1, x2, y2)
     rss = compute_rss(d, band, wall_counts)
-    tp = estimate_throughput(rss, band)
-    return tp * srf(m)
+    tp_single = estimate_throughput(rss, band)
+
+    a0, a1, a2, b1 = RATIONAL_PARAMS
+    reduction = rational(m, a0, a1, a2, b1)
+
+    # ？个 host ？？？得的？吐量
+    return (tp_single * reduction) / m
+
