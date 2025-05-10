@@ -3,7 +3,7 @@ import random
 from collections import defaultdict
 from config import load_topology_from_csv
 from ThrCal import euclidean_distance, compute_rss, estimate_throughput, rational, RATIONAL_PARAMS
-from load_balancer import rebalance_hosts
+from load_balancer import rebalance_hosts_rational as rebalance_hosts
 
 # === 示例：？造空？体矩？（无？体影？） ===
 def dummy_wall_matrix(nodes):
