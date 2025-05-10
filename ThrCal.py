@@ -1,5 +1,30 @@
 import math
-from config import PARAMS_24G, PARAMS_5G
+import os
+
+def load_params_from_file(filename: str) -> dict:
+    params = {}
+    if not os.path.exists(filename):
+        raise FileNotFoundError(f"Parameter file not found: {filename}")
+
+    with open(filename, "r") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            if "=" in line:
+                key, value = line.split("=", 1)
+                key = key.strip()
+                value = value.strip()
+                if key == "Wk":
+                    vals = list(map(float, value.split()))
+                    params["Wk"] = {f"w{i+1}": vals[i] for i in range(len(vals))}
+                else:
+                    params[key] = float(value)
+    return params
+
+# 加？参数一次即可
+PARAMS_24G = load_params_from_file(os.path.join("conf", "params_24g.conf"))
+PARAMS_5G = load_params_from_file(os.path.join("conf", "params_5g.conf"))
 
 def get_params(band: str):
     if band == '24G':
@@ -37,16 +62,10 @@ def rational(m, a0, a1, a2, b1):
 
 RATIONAL_PARAMS = (392.124, -13.3311, -1.2629, -0.0439)
 
-
-
 def final_throughput(x1, y1, x2, y2, wall_counts: dict, m: int, band: str) -> float:
     d = euclidean_distance(x1, y1, x2, y2)
     rss = compute_rss(d, band, wall_counts)
     tp_single = estimate_throughput(rss, band)
-
     a0, a1, a2, b1 = RATIONAL_PARAMS
     reduction = rational(m, a0, a1, a2, b1)
-
-    # ？个 host ？？？得的？吐量
     return (tp_single * reduction) / m
-

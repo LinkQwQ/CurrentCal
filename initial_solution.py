@@ -1,9 +1,11 @@
 import math
+import os
 import random
 from collections import defaultdict
 from config import load_topology_from_csv
 from ThrCal import euclidean_distance, compute_rss, estimate_throughput, rational, RATIONAL_PARAMS
 from load_balancer import rebalance_hosts_rational as rebalance_hosts
+from config import load_wall_matrix_from_csv
 
 # === 示例：？造空？体矩？（无？体影？） ===
 def dummy_wall_matrix(nodes):
@@ -17,9 +19,10 @@ def dummy_wall_matrix(nodes):
             wall_matrix[(host['name'], ap['name'])] = {}
     return wall_matrix
 
-# === 初始？吐量表估算 ===
+
 def compute_initial_link_speed_table(nodes: list, wall_count_matrix: dict) -> dict:
     link_table = {}
+    print("--- Estimated Link Speed Table (5G + 24G) ---")
     for host in nodes:
         if host['type'] != 'host':
             continue
@@ -32,7 +35,9 @@ def compute_initial_link_speed_table(nodes: list, wall_count_matrix: dict) -> di
                 rss = compute_rss(d, band, walls)
                 tp = estimate_throughput(rss, band)
                 link_table[(host['name'], ap['name'], band)] = tp
+                print(f"Host {host['name']} - AP {ap['name']} [{band}]: {tp:.2f} Mbps (RSS={rss:.2f} dBm)")
     return link_table
+
 
 # === Greedy AP 激活与 Host 分配（双接口） ===
 def greedy_ap_selection_dual_interface(nodes, tp_table, threshold):
@@ -123,12 +128,11 @@ from Channel import initialize_channel_assignment, simulated_annealing_channel_a
 
 if __name__ == '__main__':
     nodes = load_topology_from_csv()
-    walls = dummy_wall_matrix(nodes)
+
+
+    walls = load_wall_matrix_from_csv(os.path.join("conf", "wall_stats.csv"))
     tp_table = compute_initial_link_speed_table(nodes, walls)
 
-    print("--- Estimated Link Speed Table (5G + 24G) ---")
-    for (h, a, b), tp in tp_table.items():
-        print(f"Host {h} - AP {a} [{b}]: {tp:.2f} Mbps")
 
     print("\n--- Greedy AP Activation with Dual Interfaces + Rational Model ---")
     G = 10.0
