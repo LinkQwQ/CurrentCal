@@ -1,0 +1,42 @@
+--- Estimated Link Speed Table (11n + 11ac) ---
+Host H1 - AP AP1 [11n]: 165.17 Mbps | RSS = -55.85 dBm
+Host H1 - AP AP1 [11ac]: 322.77 Mbps | RSS = -49.11 dBm
+Host H1 - AP AP2 [11n]: 17.74 Mbps | RSS = -77.38 dBm
+Host H1 - AP AP2 [11ac]: 159.19 Mbps | RSS = -67.14 dBm
+Host H2 - AP AP1 [11n]: 212.26 Mbps | RSS = -46.72 dBm
+Host H2 - AP AP1 [11ac]: 338.70 Mbps | RSS = -41.47 dBm
+Host H2 - AP AP2 [11n]: 16.42 Mbps | RSS = -77.91 dBm
+Host H2 - AP AP2 [11ac]: 153.30 Mbps | RSS = -67.58 dBm
+Host H3 - AP AP1 [11n]: 188.35 Mbps | RSS = -52.36 dBm
+Host H3 - AP AP1 [11ac]: 330.93 Mbps | RSS = -46.19 dBm
+Host H3 - AP AP2 [11n]: 17.06 Mbps | RSS = -77.65 dBm
+Host H3 - AP AP2 [11ac]: 156.20 Mbps | RSS = -67.36 dBm
+Host H4 - AP AP1 [11n]: 161.20 Mbps | RSS = -56.37 dBm
+Host H4 - AP AP1 [11ac]: 321.26 Mbps | RSS = -49.55 dBm
+Host H4 - AP AP2 [11n]: 17.47 Mbps | RSS = -77.49 dBm
+Host H4 - AP AP2 [11ac]: 158.03 Mbps | RSS = -67.22 dBm
+Host H5 - AP AP1 [11n]: 137.34 Mbps | RSS = -59.21 dBm
+Host H5 - AP AP1 [11ac]: 311.28 Mbps | RSS = -51.93 dBm
+Host H5 - AP AP2 [11n]: 19.01 Mbps | RSS = -76.90 dBm
+Host H5 - AP AP2 [11ac]: 164.50 Mbps | RSS = -66.74 dBm
+
+--- Greedy AP Activation with Dual Interfaces + Rational Model ---
+Active APs: ['AP1', 'AP2']
+Host H3 assigned to AP AP1 [11ac] | base_tp=330.93 Mbps => adjusted_tp=43291.45 Mbps
+Host H4 assigned to AP AP1 [11n] | base_tp=161.20 Mbps => adjusted_tp=63651.17 Mbps
+Host H2 assigned to AP AP1 [11ac] | base_tp=338.70 Mbps => adjusted_tp=44307.59 Mbps
+Host H5 assigned to AP AP2 [11ac] | base_tp=164.50 Mbps => adjusted_tp=64955.73 Mbps
+Host H1 assigned to AP AP1 [11ac] | base_tp=322.77 Mbps => adjusted_tp=42223.72 Mbps
+--- Optimized Channel Assignment (After Phase 2) ---
+AP AP2: 11n => (9, 13), 11ac => (44, 48)
+AP AP1: 11n => (1, 5), 11ac => (36, 40)
+Total Interference Score: 0
+
+--- Load Rebalancing (Phase 3) ---
+
+--- Final Host Assignment (After Rebalancing) ---
+Host H3 => AP AP1 [11ac] | adjusted_tp=43291.45 Mbps
+Host H4 => AP AP1 [11n] | adjusted_tp=63651.17 Mbps
+Host H2 => AP AP1 [11ac] | adjusted_tp=44307.59 Mbps
+Host H5 => AP AP2 [11ac] | adjusted_tp=64955.73 Mbps
+Host H1 => AP AP1 [11ac] | adjusted_tp=42223.72 Mbps

@@ -11,8 +11,8 @@ def initialize_channel_assignment(aps):
     assignment = {}
     for ap in aps:
         assignment[ap['name']] = {
-            '11n': random.choice(CB_CHANNEL_PAIRS_2G),
-            '11ac': random.choice(CB_CHANNEL_PAIRS_5G)
+            '24G': random.choice(CB_CHANNEL_PAIRS_2G),
+            '5G': random.choice(CB_CHANNEL_PAIRS_5G)
         }
     return assignment
 
@@ -24,7 +24,7 @@ def compute_interference(ap_channels, active_aps):
         for j in range(i + 1, len(ap_list)):
             ap1, ch1 = ap_list[i]
             ap2, ch2 = ap_list[j]
-            for band in ['11n', '11ac']:
+            for band in ['24G', '5G']:
                 if ch1[band][0] == ch2[band][0] or ch1[band][1] == ch2[band][1]:
                     interference += 1
     return interference
@@ -39,9 +39,9 @@ def simulated_annealing_channel_assignment(aps, init_assignment, active_aps, max
         new = {k: v.copy() for k, v in current.items()}
         rand_ap = random.choice(aps)['name']
         if random.random() < 0.5:
-            new[rand_ap]['11n'] = random.choice(CB_CHANNEL_PAIRS_2G)
+            new[rand_ap]['24G'] = random.choice(CB_CHANNEL_PAIRS_2G)
         else:
-            new[rand_ap]['11ac'] = random.choice(CB_CHANNEL_PAIRS_5G)
+            new[rand_ap]['5G'] = random.choice(CB_CHANNEL_PAIRS_5G)
 
         new_score = compute_interference(new, active_aps)
         delta = new_score - best_score

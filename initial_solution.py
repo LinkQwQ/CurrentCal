@@ -28,7 +28,7 @@ def compute_initial_link_speed_table(nodes: list, wall_count_matrix: dict) -> di
                 continue
             d = euclidean_distance(host['x'], host['y'], ap['x'], ap['y'])
             walls = wall_count_matrix.get((host['name'], ap['name']), {})
-            for band in ['11n', '11ac']:
+            for band in ['5G', '24G']:
                 rss = compute_rss(d, band, walls)
                 tp = estimate_throughput(rss, band)
                 link_table[(host['name'], ap['name'], band)] = tp
@@ -48,7 +48,7 @@ def greedy_ap_selection_dual_interface(nodes, tp_table, threshold):
     for host in hosts:
         candidates = []
         for ap in aps:
-            for band in ['11n', '11ac']:
+            for band in ['5G', '24G']:
                 key = (host['name'], ap['name'], band)
                 if key in tp_table:
                     # 模？当前 host 加入？ AP-band 后的？吐
@@ -97,7 +97,7 @@ def refine_assignment_by_perturbation(nodes, tp_table, threshold, max_iter=10):
             best_ap_to_hosts_band = ap_to_hosts_band.copy()
 
         for host, (ap, band) in best_assignment.items():
-            other_band = '11ac' if band == '11n' else '11n'
+            other_band = '24G' if band == '5G' else '5G'
             key_new = (host, ap, other_band)
             if key_new in tp_table:
                 m_new = len(best_ap_to_hosts_band[ap][other_band]) + 1
@@ -126,7 +126,7 @@ if __name__ == '__main__':
     walls = dummy_wall_matrix(nodes)
     tp_table = compute_initial_link_speed_table(nodes, walls)
 
-    print("--- Estimated Link Speed Table (11n + 11ac) ---")
+    print("--- Estimated Link Speed Table (5G + 24G) ---")
     for (h, a, b), tp in tp_table.items():
         print(f"Host {h} - AP {a} [{b}]: {tp:.2f} Mbps")
 
@@ -149,7 +149,7 @@ if __name__ == '__main__':
     init_assign = initialize_channel_assignment(aps)
     final_assign, score = simulated_annealing_channel_assignment(aps, init_assign, active_aps)
     for ap_name, chs in final_assign.items():
-        print(f"AP {ap_name}: 11n => {chs['11n']}, 11ac => {chs['11ac']}")
+        print(f"AP {ap_name}: 5G => {chs['5G']}, 24G => {chs['24G']}")
     print(f"Total Interference Score: {score}")
 
     print("\n--- Load Rebalancing (Phase 3) ---")

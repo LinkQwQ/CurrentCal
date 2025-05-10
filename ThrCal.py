@@ -2,9 +2,9 @@ import math
 from config import PARAMS_24G, PARAMS_5G
 
 def get_params(band: str):
-    if band == '11n':
+    if band == '24G':
         return PARAMS_24G
-    elif band == '11ac':
+    elif band == '5G':
         return PARAMS_5G
     else:
         raise ValueError(f"Unknown band: {band}")
