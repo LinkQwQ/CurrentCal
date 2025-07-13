@@ -6,6 +6,8 @@ from config import load_topology_from_csv
 from ThrCal import euclidean_distance, compute_rss, estimate_throughput, rational, RATIONAL_PARAMS
 from load_balancer import rebalance_hosts_rational as rebalance_hosts
 from config import load_wall_matrix_from_csv
+from itertools import combinations
+
 
 # === 示例：？造空？体矩？（无？体影？） ===
 def dummy_wall_matrix(nodes):
@@ -128,8 +130,24 @@ def refine_assignment_by_perturbation(nodes, tp_table, threshold, max_iter=10):
 
     return best_active_aps, best_assignment, best_ap_to_hosts_band
 
+def search_min_active_aps(nodes, tp_table, threshold):
+    hosts = [n for n in nodes if n['type'] == 'host']
+    aps_all = [n for n in nodes if n['type'] == 'ap']
+
+    for k in range(1, len(aps_all) + 1):
+        for ap_subset in combinations(aps_all, k):
+            nodes_sub = hosts + list(ap_subset)
+            active_aps, host_assignment, ap_to_hosts_band = greedy_ap_selection_dual_interface(
+                nodes_sub, tp_table, threshold
+            )
+            if len(host_assignment) == len(hosts):
+                return active_aps, host_assignment, ap_to_hosts_band
+    return set(), {}, {}
+
 # === 示例主流程 ===
 from Channel import initialize_channel_assignment, simulated_annealing_channel_assignment
+
+
 
 if __name__ == '__main__':
     nodes = load_topology_from_csv()
@@ -140,8 +158,9 @@ if __name__ == '__main__':
 
 
     print("\n--- Greedy AP Activation with Dual Interfaces + Rational Model ---")
-    G = 10.0
-    active_aps, host_assignment, ap_to_hosts_band = refine_assignment_by_perturbation(nodes, tp_table, G, max_iter=20)
+    G = 43.0
+    active_aps, host_assignment, ap_to_hosts_band = search_min_active_aps(nodes, tp_table, G)
+
     print(f"Active APs: {sorted(active_aps)}")
 
     a0, a1, a2, b1 = RATIONAL_PARAMS
