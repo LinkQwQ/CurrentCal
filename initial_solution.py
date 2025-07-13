@@ -19,24 +19,29 @@ def dummy_wall_matrix(nodes):
             wall_matrix[(host['name'], ap['name'])] = {}
     return wall_matrix
 
+def ap_id_from_name(ap_name: str) -> int:
+    return int(''.join(filter(str.isdigit, ap_name)))
 
 def compute_initial_link_speed_table(nodes: list, wall_count_matrix: dict) -> dict:
     link_table = {}
-    print("--- Estimated Link Speed Table (5G + 24G) ---")
+    print("--- Estimated Link Speed Table (5G + 24G, by AP ID rule) ---")
     for host in nodes:
         if host['type'] != 'host':
             continue
         for ap in nodes:
             if ap['type'] != 'ap':
                 continue
+            ap_id = ap_id_from_name(ap['name'])
+            # 只保留？ AP ？？？段
+            band = "5G" if ap_id % 2 == 1 else "24G"
             d = euclidean_distance(host['x'], host['y'], ap['x'], ap['y'])
             walls = wall_count_matrix.get((host['name'], ap['name']), {})
-            for band in ['5G', '24G']:
-                rss = compute_rss(d, band, walls)
-                tp = estimate_throughput(rss, band)
-                link_table[(host['name'], ap['name'], band)] = tp
-                print(f"Host {host['name']} - AP {ap['name']} [{band}]: {tp:.2f} Mbps (RSS={rss:.2f} dBm)")
+            rss = compute_rss(d, band, walls)
+            tp = estimate_throughput(rss, band)
+            link_table[(host['name'], ap['name'], band)] = tp
+            print(f"Host {host['name']} - AP {ap['name']} [{band}]: {tp:.2f} Mbps (RSS={rss:.2f} dBm)")
     return link_table
+
 
 
 # === Greedy AP 激活与 Host 分配（双接口） ===

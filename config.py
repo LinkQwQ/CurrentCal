@@ -32,7 +32,7 @@ PARAMS_5G  = load_parameters_from_conf(os.path.join(CONF_DIR, "params_5G.conf"))
 def load_topology_from_csv():
     csv_path = os.path.join(CONF_DIR, "positions.csv")
     data = []
-    with open(csv_path, 'r') as f:
+    with open(csv_path, 'r', encoding='utf-8-sig') as f:
         reader = csv.DictReader(f)
         for row in reader:
             data.append({

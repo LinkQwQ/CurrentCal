@@ -22,7 +22,7 @@ def load_params_from_file(filename: str) -> dict:
                     params[key] = float(value)
     return params
 
-# 加？参数一次即可
+# 加？参数
 PARAMS_24G = load_params_from_file(os.path.join("conf", "params_24g.conf"))
 PARAMS_5G = load_params_from_file(os.path.join("conf", "params_5g.conf"))
 
@@ -33,6 +33,9 @@ def get_params(band: str):
         return PARAMS_5G
     else:
         raise ValueError(f"Unknown band: {band}")
+
+def infer_band_by_ap_id(ap_id: int) -> str:
+    return "5G" if ap_id % 2 == 1 else "24G"
 
 def euclidean_distance(x1, y1, x2, y2) -> float:
     return ((x1 - x2)**2 + (y1 - y2)**2)**0.5
@@ -69,3 +72,8 @@ def final_throughput(x1, y1, x2, y2, wall_counts: dict, m: int, band: str) -> fl
     a0, a1, a2, b1 = RATIONAL_PARAMS
     reduction = rational(m, a0, a1, a2, b1)
     return (tp_single * reduction) / m
+
+# ？ 新？：根据 AP ？号自？判断？段版本
+def final_throughput_by_ap_id(x1, y1, x2, y2, wall_counts: dict, m: int, ap_id: int) -> float:
+    band = infer_band_by_ap_id(ap_id)
+    return final_throughput(x1, y1, x2, y2, wall_counts, m, band)
